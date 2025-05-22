@@ -2,6 +2,9 @@ package main
 
 import (
 	"go-api/controller"
+	"go-api/db"
+	"go-api/repository"
+	"go-api/usecase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,10 +12,20 @@ import (
 func main() {
 	server := gin.Default()
 
-	//Camada de controllers
-	ProductController := controller.NewProductController()
+	dbConnection, err := db.ConnectDB()
+	if err != nil {
+		panic(err)
+	}
+
+	//Camada Repository
+	ProductRepository := repository.NewProductRepository(dbConnection)
+	//Camada Usecase
+	ProductUseCase := usecase.NewProductUseCase(ProductRepository)
+	//Camada Controllers
+	ProductController := controller.NewProductController(ProductUseCase)
 
 	server.GET("/products", ProductController.GetProducts)
 
 	server.Run(":8000")
+
 }
