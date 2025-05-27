@@ -25,6 +25,8 @@ func main() {
 	ProductController := controller.NewProductController(ProductUseCase)
 
 	server.GET("/products", ProductController.GetProducts)
+	server.GET("/product/:productId", ProductController.GetProductById)
+	server.POST("product", ProductController.CreateProduct)
 
 	server.Run(":8000")
 
